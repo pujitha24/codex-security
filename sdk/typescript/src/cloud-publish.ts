@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { z } from "incur";
+import { z } from "zod";
 import { parse as parseToml } from "smol-toml";
 import { loadContract, sha256Text as sha256 } from "./contract.js";
 import {
@@ -191,10 +191,10 @@ async function publishCloudPayload(
     };
   }
   const environment = dependencies.environment ?? process.env;
-  const credentials = await readCloudCredentials(environment);
   const publishUrl =
     environment["CODEX_SECURITY_CLOUD_PUBLISH_URL"]?.trim() ||
     `${cloudBaseUrl(environment)}/cli/findings`;
+  const credentials = await readCloudCredentials(environment);
   const timeout = AbortSignal.timeout(30_000);
   const signal = dependencies.signal
     ? AbortSignal.any([dependencies.signal, timeout])
